@@ -34,58 +34,58 @@ export async function generateProject(config) {
 
     // Copy base template
     await copyBaseTemplate(projectPath, framework, templateVars);
-    logger.step(`Initialized ${getFrameworkName(framework)}`);
+    logger.success(`Initialized ${getFrameworkName(framework)}`);
 
     // Copy conditional templates
     if (styling !== 'none') {
       await copyConditionalTemplate(projectPath, framework, 'styling', styling, templateVars);
-      logger.step(`Configured ${getStylingName(styling)}`);
+      logger.success(`Configured ${getStylingName(styling)}`);
     }
 
     if (ui !== 'none') {
       await copyConditionalTemplate(projectPath, framework, 'ui', ui, templateVars);
-      logger.step(`Added ${getUIName(ui)} components`);
+      logger.success(`Added ${getUIName(ui)} components`);
     }
 
     if (stateManagement !== 'none' && stateManagement !== 'context') {
       await copyConditionalTemplate(projectPath, framework, 'state', stateManagement, templateVars);
-      logger.step(`Setup ${getStateName(stateManagement)} store`);
+      logger.success(`Setup ${getStateName(stateManagement)} store`);
     }
 
     if (dataFetching !== 'fetch') {
       await copyConditionalTemplate(projectPath, framework, 'data', dataFetching, templateVars);
-      logger.step(`Configured ${getDataFetchingName(dataFetching)}`);
+      logger.success(`Configured ${getDataFetchingName(dataFetching)}`);
     }
 
     if (database !== 'none') {
       await copyConditionalTemplate(projectPath, framework, 'database', database, templateVars);
-      logger.step(`Setup ${getDatabaseName(database)} client`);
+      logger.success(`Setup ${getDatabaseName(database)} client`);
     }
 
     if (auth !== 'none') {
       await copyConditionalTemplate(projectPath, framework, 'auth', auth, templateVars);
-      logger.step(`Configured ${getAuthName(auth)}`);
+      logger.success(`Configured ${getAuthName(auth)}`);
     }
 
     // Generate package.json
     await generatePackageJson(projectPath, config);
-    logger.step('Created package.json');
+    logger.success('Created package.json');
 
     // Generate .env.local.example
     await generateEnvExample(projectPath, config);
-    logger.step('Created .env.local.example');
+    logger.success('Created .env.local.example');
 
     // Generate README
     await generateReadme(projectPath, config);
-    logger.step('Created README.md');
+    logger.success('Created README.md');
 
     // Create folder structure
     await createFolderStructure(projectPath, framework);
-    logger.step('Created folder structure');
+    logger.success('Created folder structure');
 
     // Generate .gitignore
     await generateGitignore(projectPath);
-    logger.step('Created .gitignore');
+    logger.success('Created .gitignore');
 
     return projectPath;
   } catch (error) {
@@ -113,8 +113,22 @@ async function createMinimalFiles(projectPath, framework, templateVars) {
     await fs.ensureDir(path.join(projectPath, 'public'));
 
     // Create minimal layout
-    const layoutContent = `import type { Metadata } from 'next'
-import './globals.css'
+    const { dataFetching, stateManagement } = templateVars;
+    const needsQueryProvider = dataFetching === 'tanstack-query';
+    const needsReduxProvider = stateManagement === 'redux';
+    const needsApolloProvider = dataFetching === 'apollo';
+
+    let imports = `import type { Metadata } from 'next'\nimport './globals.css'`;
+    if (needsQueryProvider) imports += `\nimport { QueryProvider } from '@/lib/query-provider'`;
+    if (needsReduxProvider) imports += `\nimport { ReduxProvider } from '@/lib/redux-provider'`;
+    if (needsApolloProvider) imports += `\nimport { ApolloProvider } from '@/lib/apollo-provider'`;
+
+    let childrenWrapper = 'children';
+    if (needsQueryProvider) childrenWrapper = `<QueryProvider>${childrenWrapper}</QueryProvider>`;
+    if (needsReduxProvider) childrenWrapper = `<ReduxProvider>${childrenWrapper}</ReduxProvider>`;
+    if (needsApolloProvider) childrenWrapper = `<ApolloProvider>${childrenWrapper}</ApolloProvider>`;
+
+    const layoutContent = `${imports}
 
 export const metadata: Metadata = {
   title: '${projectName}',
@@ -128,7 +142,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>${childrenWrapper.replace('children', '{children}')}</body>
     </html>
   )
 }
@@ -259,9 +273,9 @@ module.exports = nextConfig
 }
 
 async function copyConditionalTemplate(projectPath, framework, type, value, templateVars) {
-  // In full implementation, this would copy from template directories
-  // For now, we'll create minimal files based on the selection
+  const templateBasePath = path.join(__dirname, 'templates', framework);
 
+  // Styling
   if (type === 'styling' && value === 'tailwind') {
     const tailwindConfig = `/** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -286,6 +300,94 @@ module.exports = {
 }
 `;
     await fs.writeFile(path.join(projectPath, 'postcss.config.js'), postcssConfig);
+  }
+
+  // UI Components - shadcn
+  if (type === 'ui' && value === 'shadcn') {
+    const shadcnPath = path.join(templateBasePath, 'shadcn');
+    if (await fs.pathExists(shadcnPath)) {
+      await fs.copy(shadcnPath, projectPath, { overwrite: false });
+    }
+  }
+
+  // State Management
+  if (type === 'state') {
+    if (value === 'zustand') {
+      const zustandPath = path.join(templateBasePath, 'zustand');
+      if (await fs.pathExists(zustandPath)) {
+        await fs.copy(zustandPath, projectPath, { overwrite: false });
+      }
+    } else if (value === 'redux') {
+      const reduxPath = path.join(templateBasePath, 'redux');
+      if (await fs.pathExists(reduxPath)) {
+        await fs.copy(reduxPath, projectPath, { overwrite: false });
+      }
+    } else if (value === 'jotai') {
+      const jotaiPath = path.join(templateBasePath, 'jotai');
+      if (await fs.pathExists(jotaiPath)) {
+        await fs.copy(jotaiPath, projectPath, { overwrite: false });
+      }
+    }
+  }
+
+  // Data Fetching
+  if (type === 'data') {
+    if (value === 'tanstack-query') {
+      const tanstackPath = path.join(templateBasePath, 'tanstack');
+      if (await fs.pathExists(tanstackPath)) {
+        await fs.copy(tanstackPath, projectPath, { overwrite: false });
+      }
+    } else if (value === 'swr') {
+      const swrPath = path.join(templateBasePath, 'swr');
+      if (await fs.pathExists(swrPath)) {
+        await fs.copy(swrPath, projectPath, { overwrite: false });
+      }
+    } else if (value === 'apollo') {
+      const apolloPath = path.join(templateBasePath, 'apollo');
+      if (await fs.pathExists(apolloPath)) {
+        await fs.copy(apolloPath, projectPath, { overwrite: false });
+      }
+    }
+  }
+
+  // Database
+  if (type === 'database') {
+    if (value === 'supabase') {
+      const supabasePath = path.join(templateBasePath, 'supabase');
+      if (await fs.pathExists(supabasePath)) {
+        await fs.copy(supabasePath, projectPath, { overwrite: false });
+      }
+    } else if (value === 'prisma') {
+      const prismaPath = path.join(templateBasePath, 'prisma');
+      if (await fs.pathExists(prismaPath)) {
+        await fs.copy(prismaPath, projectPath, { overwrite: false });
+      }
+    } else if (value === 'mongodb') {
+      const mongoPath = path.join(templateBasePath, 'mongodb');
+      if (await fs.pathExists(mongoPath)) {
+        await fs.copy(mongoPath, projectPath, { overwrite: false });
+      }
+    } else if (value === 'firebase') {
+      const firebasePath = path.join(templateBasePath, 'firebase');
+      if (await fs.pathExists(firebasePath)) {
+        await fs.copy(firebasePath, projectPath, { overwrite: false });
+      }
+    }
+  }
+
+  // Auth
+  if (type === 'auth') {
+    if (value === 'nextauth') {
+      const nextauthPath = path.join(templateBasePath, 'nextauth');
+      if (await fs.pathExists(nextauthPath)) {
+        await fs.copy(nextauthPath, projectPath, { overwrite: false });
+      }
+    } else if (value === 'clerk') {
+      const clerkPath = path.join(templateBasePath, 'clerk');
+      if (await fs.pathExists(clerkPath)) {
+        await fs.copy(clerkPath, projectPath, { overwrite: false });
+      }
+    }
   }
 }
 
