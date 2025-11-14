@@ -118,7 +118,7 @@ async function createMinimalFiles(projectPath, framework, templateVars) {
     const needsReduxProvider = stateManagement === 'redux';
     const needsApolloProvider = dataFetching === 'apollo';
 
-    let imports = `import type { Metadata } from 'next'\nimport './globals.css'`;
+    let imports = `import type { Metadata } from 'next'\nimport { Inter } from 'next/font/google'\nimport './globals.css'\n\nconst inter = Inter({ subsets: ['latin'], weight: ['300', '400', '500', '600'] })`;
     if (needsQueryProvider) imports += `\nimport { QueryProvider } from '@/lib/query-provider'`;
     if (needsReduxProvider) imports += `\nimport { ReduxProvider } from '@/lib/redux-provider'`;
     if (needsApolloProvider) imports += `\nimport { ApolloProvider } from '@/lib/apollo-provider'`;
@@ -142,7 +142,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>${childrenWrapper.replace('children', '{children}')}</body>
+      <body className={inter.className}>${childrenWrapper.replace('children', '{children}')}</body>
     </html>
   )
 }
@@ -152,95 +152,106 @@ export default function RootLayout({
     // Create minimal page
     const pageContent = `export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-block mb-4 px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-full">
-              <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
-                Generated with DevStart CLI ⚡
-              </p>
+    <main className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-6 py-20">
+        {/* Header */}
+        <header className="mb-20 border-b border-black pb-12">
+          <div className="mb-4">
+            <span className="text-xs font-light tracking-widest uppercase text-gray-600">
+              Generated with DevStart CLI
+            </span>
+          </div>
+          <h1 className="text-6xl md:text-8xl font-light tracking-tight text-black mb-6">
+            ${projectName}
+          </h1>
+          <p className="text-xl font-light text-gray-600 max-w-2xl">
+            Production-ready application scaffolded in 30 seconds
+          </p>
+        </header>
+
+        {/* Tech Stack */}
+        <section className="mb-20">
+          <h2 className="text-xs font-medium tracking-widest uppercase text-black mb-8 border-b border-gray-200 pb-3">
+            Your Stack
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            ${templateVars.styling !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">Styling</div>
+              <div className="font-light text-black">${getStylingName(templateVars.styling)}</div>
+            </div>` : ''}
+            ${templateVars.ui !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">UI Components</div>
+              <div className="font-light text-black">${getUIName(templateVars.ui)}</div>
+            </div>` : ''}
+            ${templateVars.stateManagement !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">State</div>
+              <div className="font-light text-black">${getStateName(templateVars.stateManagement)}</div>
+            </div>` : ''}
+            ${templateVars.dataFetching !== 'fetch' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">Data Fetching</div>
+              <div className="font-light text-black">${getDataFetchingName(templateVars.dataFetching)}</div>
+            </div>` : ''}
+            ${templateVars.database !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">Database</div>
+              <div className="font-light text-black">${getDatabaseName(templateVars.database)}</div>
+            </div>` : ''}
+            ${templateVars.auth !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">Authentication</div>
+              <div className="font-light text-black">${getAuthName(templateVars.auth)}</div>
+            </div>` : ''}
+          </div>
+        </section>
+
+        {/* Quick Start */}
+        <section className="mb-20 border border-black p-8">
+          <h2 className="text-xs font-medium tracking-widest uppercase text-black mb-6">
+            Quick Start
+          </h2>
+          <div className="space-y-4 font-light text-gray-700">
+            <div className="flex items-start gap-3">
+              <span className="text-gray-400 mt-1">01</span>
+              <p>Edit <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">app/page.tsx</code> to customize this page</p>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent mb-6">
-              ${projectName}
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Your production-ready app is ready to ship
+            <div className="flex items-start gap-3">
+              <span className="text-gray-400 mt-1">02</span>
+              <p>Configure environment variables in <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">.env.local.example</code></p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-gray-400 mt-1">03</span>
+              <p>Your integrations are ready to use in the <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">lib/</code> folder</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer / DevStart Promo */}
+        <footer className="border-t border-gray-200 pt-12">
+          <div className="mb-8">
+            <p className="text-sm font-light text-gray-600 mb-6">
+              This project was scaffolded in 30 seconds, saving you 2-4 hours of manual configuration.
             </p>
-          </div>
-
-          {/* Tech Stack Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <span>🛠️</span> Your Tech Stack
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              ${templateVars.styling !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <div className="text-3xl mb-2">🎨</div>
-                <div className="text-sm font-medium text-gray-900 dark:text-white">${getStylingName(templateVars.styling)}</div>
-              </div>` : ''}
-              ${templateVars.ui !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <div className="text-3xl mb-2">🧩</div>
-                <div className="text-sm font-medium text-gray-900 dark:text-white">${getUIName(templateVars.ui)}</div>
-              </div>` : ''}
-              ${templateVars.stateManagement !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <div className="text-3xl mb-2">📦</div>
-                <div className="text-sm font-medium text-gray-900 dark:text-white">${getStateName(templateVars.stateManagement)}</div>
-              </div>` : ''}
-              ${templateVars.dataFetching !== 'fetch' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <div className="text-3xl mb-2">🔄</div>
-                <div className="text-sm font-medium text-gray-900 dark:text-white">${getDataFetchingName(templateVars.dataFetching)}</div>
-              </div>` : ''}
-              ${templateVars.database !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <div className="text-3xl mb-2">💾</div>
-                <div className="text-sm font-medium text-gray-900 dark:text-white">${getDatabaseName(templateVars.database)}</div>
-              </div>` : ''}
-              ${templateVars.auth !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <div className="text-3xl mb-2">🔐</div>
-                <div className="text-sm font-medium text-gray-900 dark:text-white">${getAuthName(templateVars.auth)}</div>
-              </div>` : ''}
-            </div>
-          </div>
-
-          {/* Quick Start */}
-          <div className="bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-2xl shadow-xl p-8 text-white mb-8">
-            <h2 className="text-2xl font-bold mb-4">🚀 Quick Start</h2>
-            <div className="space-y-3 text-indigo-50">
-              <p>• Edit <code className="bg-white/20 px-2 py-1 rounded text-sm font-mono">app/page.tsx</code> to customize this page</p>
-              <p>• Check <code className="bg-white/20 px-2 py-1 rounded text-sm font-mono">.env.local.example</code> for environment variables</p>
-              <p>• Your integrations are ready in the <code className="bg-white/20 px-2 py-1 rounded text-sm font-mono">lib/</code> folder</p>
-            </div>
-          </div>
-
-          {/* DevStart CLI Promotion */}
-          <div className="text-center py-8 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Saved 2-4 hours of setup time with DevStart CLI
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <a
                 href="https://github.com/akshadjaiswal/devstart"
-                className="inline-flex items-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium px-6 py-3 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                className="inline-block border border-black px-6 py-3 text-sm font-light hover:bg-black hover:text-white transition-colors text-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span>⭐</span> Star on GitHub
+                ★ Star on GitHub
               </a>
               <a
                 href="https://www.npmjs.com/package/devstart-cli"
-                className="inline-flex items-center gap-2 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white font-medium px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="inline-block border border-gray-300 px-6 py-3 text-sm font-light hover:border-black transition-colors text-center"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span>📦</span> View on npm
+                View on npm
               </a>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
-              Create your own: <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">npx devstart-cli init</code>
-            </p>
           </div>
-        </div>
+          <div className="text-xs font-light text-gray-500">
+            <code className="bg-gray-50 border border-gray-200 px-2 py-1 font-mono">npx devstart-cli init</code>
+          </div>
+        </footer>
       </div>
     </main>
   )
