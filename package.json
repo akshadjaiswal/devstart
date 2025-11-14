@@ -1,9 +1,16 @@
 {
-  "name": "@devstart/cli",
+  "name": "devstart-cli",
   "version": "1.0.0",
   "description": "A powerful CLI tool that scaffolds production-ready Next.js projects with your preferred tech stack in seconds",
   "main": "src/index.js",
   "type": "module",
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md"
+  ],
   "bin": {
     "devstart": "./bin/index.js",
     "create-devstart-app": "./bin/index.js"
@@ -28,16 +35,16 @@
     "typescript",
     "supabase"
   ],
-  "author": "Akshad",
+  "author": "Akshad Jaiswal <https://github.com/akshadjaiswal>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/devstart-cli.git"
+    "url": "https://github.com/akshadjaiswal/devstart.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/devstart-cli/issues"
+    "url": "https://github.com/akshadjaiswal/devstart/issues"
   },
-  "homepage": "https://github.com/yourusername/devstart-cli#readme",
+  "homepage": "https://github.com/akshadjaiswal/devstart#readme",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
