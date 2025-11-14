@@ -1,0 +1,56 @@
+{
+  "name": "@devstart/cli",
+  "version": "1.0.0",
+  "description": "A powerful CLI tool that scaffolds production-ready Next.js projects with your preferred tech stack in seconds",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "devstart": "./bin/index.js",
+    "create-devstart-app": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node bin/index.js",
+    "prepublishOnly": "echo 'Ready to publish'"
+  },
+  "keywords": [
+    "cli",
+    "scaffold",
+    "nextjs",
+    "react",
+    "vite",
+    "remix",
+    "template",
+    "boilerplate",
+    "generator",
+    "project-setup",
+    "tailwind",
+    "typescript",
+    "supabase"
+  ],
+  "author": "Akshad",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/devstart-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/devstart-cli/issues"
+  },
+  "homepage": "https://github.com/yourusername/devstart-cli#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "commander": "^11.0.0",
+    "inquirer": "^9.2.0",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.0",
+    "execa": "^8.0.0",
+    "fs-extra": "^11.1.0",
+    "ejs": "^3.1.9",
+    "validate-npm-package-name": "^5.0.0"
+  },
+  "devDependencies": {}
+}
