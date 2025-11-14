@@ -40,15 +40,15 @@ export const dependencyMap = {
   styling: {
     'tailwind': {
       dependencies: [],
-      devDependencies: ['tailwindcss@^3', 'postcss@latest', 'autoprefixer@latest']
+      devDependencies: ['tailwindcss@^3.4.0', 'postcss@^8.4.0', 'autoprefixer@^10.4.0']
     },
     'css-modules': {
       dependencies: [],
       devDependencies: []
     },
     'styled-components': {
-      dependencies: ['styled-components@latest'],
-      devDependencies: ['@types/styled-components@latest']
+      dependencies: ['styled-components@^6.1.0'],
+      devDependencies: ['@types/styled-components@^5.1.0']
     },
     'none': {
       dependencies: [],
@@ -59,19 +59,19 @@ export const dependencyMap = {
   ui: {
     'shadcn': {
       dependencies: [
-        '@radix-ui/react-slot@latest',
-        'class-variance-authority@latest',
-        'clsx@latest',
-        'tailwind-merge@latest'
+        '@radix-ui/react-slot@^1.1.0',
+        'class-variance-authority@^0.7.0',
+        'clsx@^2.1.0',
+        'tailwind-merge@^2.5.0'
       ],
       devDependencies: []
     },
     'radix': {
-      dependencies: ['@radix-ui/react-icons@latest'],
+      dependencies: ['@radix-ui/react-icons@^1.3.0'],
       devDependencies: []
     },
     'headless': {
-      dependencies: ['@headlessui/react@latest'],
+      dependencies: ['@headlessui/react@^2.2.0'],
       devDependencies: []
     },
     'none': {
@@ -82,15 +82,15 @@ export const dependencyMap = {
 
   stateManagement: {
     'zustand': {
-      dependencies: ['zustand@latest'],
+      dependencies: ['zustand@^5.0.0'],
       devDependencies: []
     },
     'redux': {
-      dependencies: ['@reduxjs/toolkit@latest', 'react-redux@latest'],
+      dependencies: ['@reduxjs/toolkit@^2.3.0', 'react-redux@^9.1.0'],
       devDependencies: []
     },
     'jotai': {
-      dependencies: ['jotai@latest'],
+      dependencies: ['jotai@^2.10.0'],
       devDependencies: []
     },
     'context': {
@@ -105,15 +105,15 @@ export const dependencyMap = {
 
   dataFetching: {
     'tanstack-query': {
-      dependencies: ['@tanstack/react-query@latest'],
+      dependencies: ['@tanstack/react-query@^5.59.0'],
       devDependencies: []
     },
     'swr': {
-      dependencies: ['swr@latest'],
+      dependencies: ['swr@^2.2.0'],
       devDependencies: []
     },
     'apollo': {
-      dependencies: ['@apollo/client@latest', 'graphql@latest'],
+      dependencies: ['@apollo/client@^3.11.0', 'graphql@^16.9.0'],
       devDependencies: []
     },
     'fetch': {
@@ -124,19 +124,19 @@ export const dependencyMap = {
 
   database: {
     'supabase': {
-      dependencies: ['@supabase/supabase-js@latest', '@supabase/ssr@latest'],
+      dependencies: ['@supabase/supabase-js@^2.45.0', '@supabase/ssr@^0.5.0'],
       devDependencies: []
     },
     'firebase': {
-      dependencies: ['firebase@latest'],
+      dependencies: ['firebase@^11.0.0'],
       devDependencies: []
     },
     'prisma': {
-      dependencies: ['@prisma/client@latest'],
-      devDependencies: ['prisma@latest']
+      dependencies: ['@prisma/client@^6.0.0'],
+      devDependencies: ['prisma@^6.0.0']
     },
     'mongodb': {
-      dependencies: ['mongodb@latest'],
+      dependencies: ['mongodb@^6.10.0'],
       devDependencies: []
     },
     'none': {
@@ -151,11 +151,11 @@ export const dependencyMap = {
       devDependencies: []
     },
     'nextauth': {
-      dependencies: ['next-auth@latest'],
+      dependencies: ['next-auth@^5.0.0-beta.25'],
       devDependencies: []
     },
     'clerk': {
-      dependencies: ['@clerk/nextjs@latest'],
+      dependencies: ['@clerk/nextjs@^6.7.0'],
       devDependencies: []
     },
     'firebase-auth': {
@@ -170,27 +170,27 @@ export const dependencyMap = {
 
   additionalTools: {
     'axios': {
-      dependencies: ['axios@latest'],
+      dependencies: ['axios@^1.7.0'],
       devDependencies: []
     },
     'date-fns': {
-      dependencies: ['date-fns@latest'],
+      dependencies: ['date-fns@^4.1.0'],
       devDependencies: []
     },
     'zod': {
-      dependencies: ['zod@latest'],
+      dependencies: ['zod@^3.23.0'],
       devDependencies: []
     },
     'react-hook-form': {
-      dependencies: ['react-hook-form@latest'],
+      dependencies: ['react-hook-form@^7.53.0'],
       devDependencies: []
     },
     'framer-motion': {
-      dependencies: ['framer-motion@latest'],
+      dependencies: ['framer-motion@^11.11.0'],
       devDependencies: []
     },
     'lucide-react': {
-      dependencies: ['lucide-react@latest'],
+      dependencies: ['lucide-react@^0.460.0'],
       devDependencies: []
     }
   }

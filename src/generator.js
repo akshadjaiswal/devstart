@@ -152,54 +152,93 @@ export default function RootLayout({
     // Create minimal page
     const pageContent = `export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-            Welcome to ${projectName}
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Built with DevStart CLI 🚀
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">⚡ Fast</h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Built with Next.js 15 and optimized for performance
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <div className="inline-block mb-4 px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-full">
+              <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                Generated with DevStart CLI ⚡
               </p>
             </div>
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent mb-6">
+              ${projectName}
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Your production-ready app is ready to ship
+            </p>
+          </div>
 
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">🎨 Styled</h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Tailwind CSS configured and ready to use
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">🚀 Ready</h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Start building your application right away
-              </p>
+          {/* Tech Stack Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+              <span>🛠️</span> Your Tech Stack
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              ${templateVars.styling !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-3xl mb-2">🎨</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-white">${getStylingName(templateVars.styling)}</div>
+              </div>` : ''}
+              ${templateVars.ui !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-3xl mb-2">🧩</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-white">${getUIName(templateVars.ui)}</div>
+              </div>` : ''}
+              ${templateVars.stateManagement !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-3xl mb-2">📦</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-white">${getStateName(templateVars.stateManagement)}</div>
+              </div>` : ''}
+              ${templateVars.dataFetching !== 'fetch' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-3xl mb-2">🔄</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-white">${getDataFetchingName(templateVars.dataFetching)}</div>
+              </div>` : ''}
+              ${templateVars.database !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-3xl mb-2">💾</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-white">${getDatabaseName(templateVars.database)}</div>
+              </div>` : ''}
+              ${templateVars.auth !== 'none' ? `<div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className="text-3xl mb-2">🔐</div>
+                <div className="text-sm font-medium text-gray-900 dark:text-white">${getAuthName(templateVars.auth)}</div>
+              </div>` : ''}
             </div>
           </div>
 
-          <div className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-              👋 Getting Started
-            </h3>
-            <p className="text-blue-800 dark:text-blue-200 mb-4">
-              Edit <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-sm">app/page.tsx</code> to customize this page
+          {/* Quick Start */}
+          <div className="bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-2xl shadow-xl p-8 text-white mb-8">
+            <h2 className="text-2xl font-bold mb-4">🚀 Quick Start</h2>
+            <div className="space-y-3 text-indigo-50">
+              <p>• Edit <code className="bg-white/20 px-2 py-1 rounded text-sm font-mono">app/page.tsx</code> to customize this page</p>
+              <p>• Check <code className="bg-white/20 px-2 py-1 rounded text-sm font-mono">.env.local.example</code> for environment variables</p>
+              <p>• Your integrations are ready in the <code className="bg-white/20 px-2 py-1 rounded text-sm font-mono">lib/</code> folder</p>
+            </div>
+          </div>
+
+          {/* DevStart CLI Promotion */}
+          <div className="text-center py-8 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Saved 2-4 hours of setup time with DevStart CLI
             </p>
-            <a
-              href="https://nextjs.org/docs"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Read the docs →
-            </a>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
+                href="https://github.com/akshadjaiswal/devstart"
+                className="inline-flex items-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium px-6 py-3 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>⭐</span> Star on GitHub
+              </a>
+              <a
+                href="https://www.npmjs.com/package/devstart-cli"
+                className="inline-flex items-center gap-2 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white font-medium px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>📦</span> View on npm
+              </a>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
+              Create your own: <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">npx devstart-cli init</code>
+            </p>
           </div>
         </div>
       </div>
@@ -229,6 +268,7 @@ module.exports = nextConfig
   if (hasTypescript) {
     const tsConfig = framework === 'nextjs-app' || framework === 'nextjs-pages' ? {
       compilerOptions: {
+        target: "ES2017",
         lib: ["dom", "dom.iterable", "esnext"],
         allowJs: true,
         skipLibCheck: true,
