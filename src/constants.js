@@ -3,36 +3,36 @@
 export const dependencyMap = {
   framework: {
     'nextjs-app': {
-      dependencies: ['next@15', 'react@19', 'react-dom@19'],
-      devDependencies: ['@types/node@latest', '@types/react@latest', '@types/react-dom@latest', 'typescript@latest']
+      dependencies: ['next@^15.0.0', 'react@^19.0.0', 'react-dom@^19.0.0'],
+      devDependencies: ['@types/node@^22', '@types/react@^19', '@types/react-dom@^19', 'typescript@^5']
     },
     'nextjs-pages': {
-      dependencies: ['next@15', 'react@19', 'react-dom@19'],
-      devDependencies: ['@types/node@latest', '@types/react@latest', '@types/react-dom@latest', 'typescript@latest']
+      dependencies: ['next@^15.0.0', 'react@^19.0.0', 'react-dom@^19.0.0'],
+      devDependencies: ['@types/node@^22', '@types/react@^19', '@types/react-dom@^19', 'typescript@^5']
     },
     'vite-react': {
-      dependencies: ['react@19', 'react-dom@19'],
+      dependencies: ['react@^19.0.0', 'react-dom@^19.0.0'],
       devDependencies: [
-        'vite@latest',
-        '@vitejs/plugin-react@latest',
-        '@types/react@latest',
-        '@types/react-dom@latest',
-        'typescript@latest'
+        'vite@^6.0.0',
+        '@vitejs/plugin-react@^4.3.0',
+        '@types/react@^19',
+        '@types/react-dom@^19',
+        'typescript@^5'
       ]
     },
     'remix': {
       dependencies: [
-        '@remix-run/node@latest',
-        '@remix-run/react@latest',
-        '@remix-run/serve@latest',
-        'react@19',
-        'react-dom@19'
+        '@remix-run/node@^2.15.0',
+        '@remix-run/react@^2.15.0',
+        '@remix-run/serve@^2.15.0',
+        'react@^19.0.0',
+        'react-dom@^19.0.0'
       ],
       devDependencies: [
-        '@remix-run/dev@latest',
-        '@types/react@latest',
-        '@types/react-dom@latest',
-        'typescript@latest'
+        '@remix-run/dev@^2.15.0',
+        '@types/react@^19',
+        '@types/react-dom@^19',
+        'typescript@^5'
       ]
     }
   },
@@ -40,7 +40,7 @@ export const dependencyMap = {
   styling: {
     'tailwind': {
       dependencies: [],
-      devDependencies: ['tailwindcss@latest', 'postcss@latest', 'autoprefixer@latest']
+      devDependencies: ['tailwindcss@^3', 'postcss@latest', 'autoprefixer@latest']
     },
     'css-modules': {
       dependencies: [],

@@ -138,9 +138,57 @@ export default function RootLayout({
     // Create minimal page
     const pageContent = `export default function Home() {
   return (
-    <main className="min-h-screen p-8">
-      <h1 className="text-4xl font-bold">Welcome to ${projectName}</h1>
-      <p className="mt-4">Built with DevStart CLI 🚀</p>
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+            Welcome to ${projectName}
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            Built with DevStart CLI 🚀
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">⚡ Fast</h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Built with Next.js 15 and optimized for performance
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">🎨 Styled</h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Tailwind CSS configured and ready to use
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">🚀 Ready</h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Start building your application right away
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              👋 Getting Started
+            </h3>
+            <p className="text-blue-800 dark:text-blue-200 mb-4">
+              Edit <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-sm">app/page.tsx</code> to customize this page
+            </p>
+            <a
+              href="https://nextjs.org/docs"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Read the docs →
+            </a>
+          </div>
+        </div>
+      </div>
     </main>
   )
 }
@@ -319,9 +367,28 @@ async function generatePackageJson(projectPath, config) {
 function convertToObject(depsArray) {
   const obj = {};
   depsArray.forEach(dep => {
-    const [name, version] = dep.split('@').filter(Boolean);
-    const pkgName = name.startsWith('@') ? `@${name}` : name;
-    obj[dep.includes('@') && !dep.startsWith('@') ? name : pkgName] = version || 'latest';
+    // Handle scoped packages (@org/package@version) and regular packages (package@version)
+    let pkgName, version;
+
+    if (dep.startsWith('@')) {
+      // Scoped package: @org/package@version
+      const parts = dep.split('@');
+      // parts[0] is empty, parts[1] is org/package, parts[2] is version
+      pkgName = '@' + parts[1];
+      version = parts[2] || 'latest';
+    } else {
+      // Regular package: package@version
+      const atIndex = dep.indexOf('@');
+      if (atIndex > 0) {
+        pkgName = dep.substring(0, atIndex);
+        version = dep.substring(atIndex + 1);
+      } else {
+        pkgName = dep;
+        version = 'latest';
+      }
+    }
+
+    obj[pkgName] = version;
   });
   return obj;
 }
