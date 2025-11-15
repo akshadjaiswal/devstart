@@ -106,7 +106,7 @@ export const dependencyMap = {
   dataFetching: {
     'tanstack-query': {
       dependencies: ['@tanstack/react-query@^5.59.0'],
-      devDependencies: ['@tanstack/react-query-devtools@^5.59.0']
+      devDependencies: []
     },
     'swr': {
       dependencies: ['swr@^2.2.0'],
