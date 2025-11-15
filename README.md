@@ -48,9 +48,10 @@ devstart init
 - ⚡ **30-Second Setup** - One command, 9 questions, done
 - 📦 **13 Integrations** - Supabase, shadcn/ui, Zustand, TanStack Query, Redux, Prisma, MongoDB, and more
 - 🔧 **Working Setup Files** - Get configured clients, providers, and helpers, not just dependencies
-- 🎨 **Smart Provider Wrapping** - Auto-wraps layout.tsx with QueryProvider, ReduxProvider, ApolloProvider
+- 🎨 **Smart Provider Wrapping** - Auto-wraps layout.tsx with all necessary providers (Query, Redux, Apollo, SWR, Jotai)
 - 📚 **Best Practices** - Proper folder structure, TypeScript configs, environment templates
-- 🚀 **Production Ready** - Everything works out of the box
+- 🚀 **Production Ready** - Everything works out of the box, no configuration needed
+- ✅ **Typed & Safe** - Full TypeScript support with typed hooks for Redux and proper type inference
 
 ## What You Get
 
@@ -64,23 +65,23 @@ DevStart doesn't just install packages — it creates **working setup files** fo
 
 **For TanStack Query:** `lib/query-provider.tsx` — Provider auto-wrapped in layout.tsx
 
-**For NextAuth:** `app/api/auth/[...nextauth]/route.ts` + `lib/auth.ts` — Auth handler and config
+**For NextAuth:** `app/api/auth/[...nextauth]/route.ts` + `lib/auth.ts` — Auth.js v5 with GitHub & Google providers
 
-**For Prisma:** `prisma/schema.prisma` + `lib/prisma.ts` — Example schema and client
+**For Prisma:** `prisma/schema.prisma` + `lib/prisma.ts` — Example schema, client, and auto-generate script
 
 **For MongoDB:** `lib/mongodb.ts` — Connection setup with singleton pattern
 
-**For Redux:** `lib/store.ts` + `lib/redux-provider.tsx` — Store and provider auto-wrapped
+**For Redux:** `lib/store.ts` + `lib/redux-provider.tsx` — Store with typed hooks, provider auto-wrapped
 
 **For Firebase:** `lib/firebase.ts` — Initialized with Auth and Firestore
 
 **For Clerk:** `middleware.ts` — Clerk middleware ready
 
-**For Jotai:** `lib/atoms.ts` — Example atoms
+**For Jotai:** `lib/jotai-provider.tsx` + `lib/atoms.ts` — Provider auto-wrapped with example atoms
 
-**For SWR:** `lib/swr-config.ts` — SWR configuration
+**For SWR:** `lib/swr-provider.tsx` — Provider auto-wrapped with fetcher configuration
 
-**For Apollo:** `lib/apollo-client.ts` + `lib/apollo-provider.tsx` — GraphQL client and provider
+**For Apollo:** `lib/apollo-client.ts` + `lib/apollo-provider.tsx` — GraphQL client and provider auto-wrapped
 
 Plus: `.env.local.example`, `README.md`, beautiful landing page, and more.
 
@@ -195,7 +196,7 @@ my-saas-app/
 
 **Authentication**
 - Supabase Auth
-- NextAuth.js
+- NextAuth.js (Auth.js v5)
 - Clerk
 - Firebase Auth
 
@@ -237,10 +238,20 @@ devstart init
 
 ## Roadmap
 
-**v1.0** (Current) - Core CLI with 13 integrations
+**v1.0.4** (Current) - Core CLI with 13 integrations, Auth.js v5, typed Redux hooks, auto-wrapped providers
 **v1.1** (Next) - Template presets (SaaS, Blog, Dashboard)
 **v1.2** (Future) - Configuration save/load
 **v2.0** (Future) - Custom templates and marketplace
+
+## What's New in v1.0.4
+
+- ✅ **Auth.js v5** - Updated NextAuth to latest Auth.js v5 with modern API
+- ✅ **Redux Typed Hooks** - Added `useAppDispatch` and `useAppSelector` for type-safe Redux
+- ✅ **SWR Provider** - Auto-wrapped SWR provider with fetcher configuration
+- ✅ **Jotai Provider** - Auto-wrapped Jotai provider for SSR hydration
+- ✅ **Prisma Auto-generate** - Added postinstall script to auto-generate Prisma client
+- ✅ **Redux Store Fix** - Fixed empty reducer error with example counter slice
+- ✅ **Minimal Landing Page** - Clean black & white design with Inter font
 
 ## Author
 

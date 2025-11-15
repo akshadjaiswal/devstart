@@ -39,8 +39,8 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/devstart-cli.git
-cd devstart-cli
+git clone https://github.com/akshadjaiswal/devstart.git
+cd devstart
 ```
 
 2. **Install dependencies:**
@@ -139,20 +139,66 @@ Before submitting a PR:
    - Test with minimal setup (all "None" options)
    - Test with full setup (all integrations)
 
-2. **Test on multiple platforms:**
+2. **Test specific integrations:**
+   - **NextAuth**: Verify Auth.js v5 handlers export correctly
+   - **Redux**: Check typed hooks (useAppDispatch, useAppSelector) are available
+   - **Prisma**: Verify postinstall script runs and generates client
+   - **SWR/Jotai**: Confirm providers are auto-wrapped in layout.tsx
+   - **TanStack Query**: Check QueryProvider wraps correctly
+   - **Supabase**: Test both client.ts and server.ts are created
+
+3. **Test on multiple platforms:**
    - macOS
    - Linux
    - Windows (WSL)
 
-3. **Verify generated projects:**
+4. **Verify generated projects:**
    - `npm install` succeeds
    - `npm run dev` works
    - TypeScript compiles without errors
-   - No console errors
+   - No console errors or warnings
+   - All providers render correctly
+   - Environment template (.env.local.example) is created
+
+## Provider Auto-Wrapping
+
+DevStart CLI automatically wraps your `app/layout.tsx` with necessary providers based on your selections:
+
+- **TanStack Query** → `<QueryProvider>`
+- **Redux** → `<ReduxProvider>`
+- **Apollo Client** → `<ApolloProvider>`
+- **SWR** → `<SWRProvider>`
+- **Jotai** → `<JotaiProvider>`
+
+This happens automatically during generation - no manual setup required!
+
+## Common Issues & Troubleshooting
+
+### Prisma Client Not Found
+**Error**: `Module '"@prisma/client"' has no exported member 'PrismaClient'`
+
+**Solution**: Run `npx prisma generate` to generate the Prisma client, or let the postinstall script handle it automatically.
+
+### Redux Store Error
+**Error**: `Store does not have a valid reducer`
+
+**Solution**: This is fixed in v1.0.4+. The generated store now includes an example counter slice.
+
+### NextAuth Route Not Found
+**Error**: Auth routes return 404
+
+**Solution**: Ensure you're using Auth.js v5 syntax. Check that `lib/auth.ts` exports `handlers` and the route file exports `GET` and `POST` from `@/lib/auth`.
+
+### TypeScript Errors on First Run
+**Solution**: Run `npm install` to ensure all type definitions are installed. For Prisma projects, `prisma generate` must run first.
 
 ## Questions?
 
-Feel free to open an issue with your question, or reach out to the maintainers.
+Feel free to open an issue with your question, or reach out to the maintainers:
+
+- 🐦 Twitter/X: [@akshad_999](https://x.com/akshad_999)
+- 💼 LinkedIn: [akshadsantoshjaiswal](https://www.linkedin.com/in/akshadsantoshjaiswal)
+- 🌐 GitHub: [@akshadjaiswal](https://github.com/akshadjaiswal)
 
 ## License
 
