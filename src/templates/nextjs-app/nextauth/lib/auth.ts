@@ -1,27 +1,22 @@
-import { NextAuthOptions } from 'next-auth'
-import GithubProvider from 'next-auth/providers/github'
-import GoogleProvider from 'next-auth/providers/google'
+// Auth.js v5 (NextAuth)
+// Add providers in .env.local:
+// - AUTH_GITHUB_ID, AUTH_GITHUB_SECRET
+// - AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET
+// - AUTH_SECRET (generate with: npx auth secret)
 
-export const authOptions: NextAuthOptions = {
+import NextAuth from "next-auth"
+import GitHub from "next-auth/providers/github"
+import Google from "next-auth/providers/google"
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    GitHub,
+    Google,
   ],
-  pages: {
-    signIn: '/auth/signin',
-  },
   callbacks: {
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub!
-      }
-      return session
+    authorized: async ({ auth }) => {
+      // Return true if user is authenticated
+      return !!auth
     },
   },
-}
+})

@@ -117,16 +117,22 @@ async function createMinimalFiles(projectPath, framework, templateVars) {
     const needsQueryProvider = dataFetching === 'tanstack-query';
     const needsReduxProvider = stateManagement === 'redux';
     const needsApolloProvider = dataFetching === 'apollo';
+    const needsSWRProvider = dataFetching === 'swr';
+    const needsJotaiProvider = stateManagement === 'jotai';
 
     let imports = `import type { Metadata } from 'next'\nimport { Inter } from 'next/font/google'\nimport './globals.css'\n\nconst inter = Inter({ subsets: ['latin'], weight: ['300', '400', '500', '600'] })`;
     if (needsQueryProvider) imports += `\nimport { QueryProvider } from '@/lib/query-provider'`;
     if (needsReduxProvider) imports += `\nimport { ReduxProvider } from '@/lib/redux-provider'`;
     if (needsApolloProvider) imports += `\nimport { ApolloProvider } from '@/lib/apollo-provider'`;
+    if (needsSWRProvider) imports += `\nimport { SWRProvider } from '@/lib/swr-provider'`;
+    if (needsJotaiProvider) imports += `\nimport { JotaiProvider } from '@/lib/jotai-provider'`;
 
     let childrenWrapper = 'children';
     if (needsQueryProvider) childrenWrapper = `<QueryProvider>${childrenWrapper}</QueryProvider>`;
     if (needsReduxProvider) childrenWrapper = `<ReduxProvider>${childrenWrapper}</ReduxProvider>`;
     if (needsApolloProvider) childrenWrapper = `<ApolloProvider>${childrenWrapper}</ApolloProvider>`;
+    if (needsSWRProvider) childrenWrapper = `<SWRProvider>${childrenWrapper}</SWRProvider>`;
+    if (needsJotaiProvider) childrenWrapper = `<JotaiProvider>${childrenWrapper}</JotaiProvider>`;
 
     const layoutContent = `${imports}
 
@@ -505,11 +511,18 @@ async function generatePackageJson(projectPath, config) {
   }
 
   // Create package.json
+  const scripts = { ...frameworkScripts[framework] };
+
+  // Add Prisma postinstall script if Prisma is selected
+  if (database === 'prisma') {
+    scripts.postinstall = 'prisma generate';
+  }
+
   const packageJson = {
     name: projectName,
     version: '0.1.0',
     private: true,
-    scripts: frameworkScripts[framework],
+    scripts,
     dependencies: convertToObject(dependencies),
     devDependencies: convertToObject(devDependencies)
   };
