@@ -6,6 +6,7 @@ import { generateProject } from './generator.js';
 import { installDependencies, initializeGit } from './installer.js';
 import { validateProjectPath } from './utils/validator.js';
 import { logger } from './utils/logger.js';
+import { displayBanner } from './utils/banner.js';
 
 const program = new Command();
 
@@ -19,6 +20,9 @@ program
   .description('Create a new project')
   .action(async () => {
     try {
+      // Display banner
+      displayBanner();
+
       // Get user input
       const config = await promptUser();
 

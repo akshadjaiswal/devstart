@@ -238,12 +238,18 @@ devstart init
 
 ## Roadmap
 
-**v1.0.4** (Current) - Core CLI with 13 integrations, Auth.js v5, typed Redux hooks, auto-wrapped providers
+**v1.0.5** (Current) - ASCII art banner with gradient colors
 **v1.1** (Next) - Template presets (SaaS, Blog, Dashboard)
 **v1.2** (Future) - Configuration save/load
 **v2.0** (Future) - Custom templates and marketplace
 
-## What's New in v1.0.4
+## What's New in v1.0.5
+
+- ✅ **Beautiful ASCII Banner** - Added eye-catching DEVSTART banner with gradient colors (cyan → blue → magenta → pink)
+- ✅ **Enhanced CLI Experience** - Professional startup screen with tagline and version info
+- ✅ **Customizable Design** - Easy to customize fonts, colors, and tagline (see BANNER.md)
+
+## Previous Updates (v1.0.4)
 
 - ✅ **Auth.js v5** - Updated NextAuth to latest Auth.js v5 with modern API
 - ✅ **Redux Typed Hooks** - Added `useAppDispatch` and `useAppSelector` for type-safe Redux
