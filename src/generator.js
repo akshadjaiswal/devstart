@@ -633,7 +633,7 @@ ${projectName}/
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Tailwind CSS](https://tailwindcss.com)
-- [DevStart CLI](https://github.com/yourusername/devstart-cli)
+- [DevStart CLI](https://github.com/akshadjaiswal/devstart-cli)
 
 ## Deploy
 

@@ -81,7 +81,7 @@ function displaySuccessMessage(config) {
   console.log(chalk.dim(`Your project is ready at: ./${projectName}`));
   console.log('');
   console.log(chalk.dim(`Documentation: ./${projectName}/README.md`));
-  console.log(chalk.dim('Need help? https://github.com/yourusername/devstart-cli'));
+  console.log(chalk.dim('Need help? https://github.com/akshadjaiswal/devstart-cli'));
   console.log('');
   console.log(chalk.bold.cyan('Happy coding! 🎉'));
   console.log('');
