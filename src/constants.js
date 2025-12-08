@@ -3,11 +3,11 @@
 export const dependencyMap = {
   framework: {
     'nextjs-app': {
-      dependencies: ['next@^15.0.0', 'react@^19.0.0', 'react-dom@^19.0.0'],
+      dependencies: ['next@^16.0.0', 'react@^19.0.0', 'react-dom@^19.0.0'],
       devDependencies: ['@types/node@^22', '@types/react@^19', '@types/react-dom@^19', 'typescript@^5']
     },
     'nextjs-pages': {
-      dependencies: ['next@^15.0.0', 'react@^19.0.0', 'react-dom@^19.0.0'],
+      dependencies: ['next@^16.0.0', 'react@^19.0.0', 'react-dom@^19.0.0'],
       devDependencies: ['@types/node@^22', '@types/react@^19', '@types/react-dom@^19', 'typescript@^5']
     },
     'vite-react': {
