@@ -52,6 +52,7 @@ devstart init
 - 📚 **Best Practices** - Proper folder structure, TypeScript configs, environment templates
 - 🚀 **Production Ready** - Everything works out of the box, no configuration needed
 - ✅ **Typed & Safe** - Full TypeScript support with typed hooks for Redux and proper type inference
+- ⚡  **Project based favicons** - Full project initials starting favicons
 
 ## What You Get
 
