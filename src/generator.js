@@ -112,6 +112,17 @@ async function createMinimalFiles(projectPath, framework, templateVars) {
     await fs.ensureDir(path.join(projectPath, 'app'));
     await fs.ensureDir(path.join(projectPath, 'public'));
 
+    // Generate and save favicon
+    const { generateProjectInitials, generateFaviconSVG } = await import('./utils/favicon.js');
+    const initials = generateProjectInitials(projectName);
+    const faviconSVG = generateFaviconSVG(initials);
+    await fs.writeFile(
+      path.join(projectPath, 'public', 'icon.svg'),
+      faviconSVG,
+      'utf-8'
+    );
+    logger.success(`Generated favicon with initials "${initials}"`);
+
     // Create minimal layout
     const { dataFetching, stateManagement } = templateVars;
     const needsQueryProvider = dataFetching === 'tanstack-query';
@@ -139,6 +150,9 @@ async function createMinimalFiles(projectPath, framework, templateVars) {
 export const metadata: Metadata = {
   title: '${projectName}',
   description: 'Built with DevStart CLI',
+  icons: {
+    icon: '/icon.svg',
+  },
 }
 
 export default function RootLayout({
