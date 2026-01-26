@@ -291,7 +291,8 @@ MIT © [Akshad Jaiswal](https://github.com/akshadjaiswal)
 [⭐ Star on GitHub](https://github.com/akshadjaiswal/devstart) • [📦 View on npm](https://www.npmjs.com/package/devstart-cli)
 
 </div>
---- 
+
+---
 
 <div align="center">
 
