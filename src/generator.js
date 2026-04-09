@@ -5,11 +5,13 @@ import ejs from 'ejs';
 import { logger } from './utils/logger.js';
 import { dependencyMap, frameworkScripts, envVariables } from './constants.js';
 
+export { copyConditionalTemplate };
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function generateProject(config) {
-  const { projectName, framework, styling, ui, stateManagement, dataFetching, database, auth, additionalTools, typescript } = config;
+  const { projectName, framework, styling, ui, stateManagement, dataFetching, database, auth, additionalTools, typescript, linting } = config;
   const projectPath = path.join(process.cwd(), projectName);
 
   try {
@@ -86,6 +88,12 @@ export async function generateProject(config) {
     // Generate .gitignore
     await generateGitignore(projectPath);
     logger.success('Created .gitignore');
+
+    // Generate linting config
+    if (linting && linting !== 'none') {
+      await generateLintingConfig(projectPath, config);
+      logger.success(`Configured ${linting === 'eslint-prettier' ? 'ESLint + Prettier' : 'ESLint'}`);
+    }
 
     return projectPath;
   } catch (error) {
@@ -295,6 +303,102 @@ module.exports = nextConfig
     await fs.writeFile(path.join(projectPath, 'next.config.js'), nextConfig);
   }
 
+  if (framework === 'vite-react') {
+    await fs.ensureDir(path.join(projectPath, 'src'));
+    await fs.ensureDir(path.join(projectPath, 'public'));
+
+    const { dataFetching, stateManagement } = templateVars;
+    const needsQueryProvider = dataFetching === 'tanstack-query';
+    const needsReduxProvider = stateManagement === 'redux';
+    const needsApolloProvider = dataFetching === 'apollo';
+    const needsSWRProvider = dataFetching === 'swr';
+    const needsJotaiProvider = stateManagement === 'jotai';
+
+    let providerImports = '';
+    if (needsQueryProvider) providerImports += `import { QueryProvider } from '../lib/query-provider'\n`;
+    if (needsReduxProvider) providerImports += `import { ReduxProvider } from '../lib/redux-provider'\n`;
+    if (needsApolloProvider) providerImports += `import { ApolloProvider } from '../lib/apollo-provider'\n`;
+    if (needsSWRProvider) providerImports += `import { SWRProvider } from '../lib/swr-provider'\n`;
+    if (needsJotaiProvider) providerImports += `import { JotaiProvider } from '../lib/jotai-provider'\n`;
+
+    let appWrapper = '<App />';
+    if (needsQueryProvider) appWrapper = `<QueryProvider>${appWrapper}</QueryProvider>`;
+    if (needsReduxProvider) appWrapper = `<ReduxProvider>${appWrapper}</ReduxProvider>`;
+    if (needsApolloProvider) appWrapper = `<ApolloProvider>${appWrapper}</ApolloProvider>`;
+    if (needsSWRProvider) appWrapper = `<SWRProvider>${appWrapper}</SWRProvider>`;
+    if (needsJotaiProvider) appWrapper = `<JotaiProvider>${appWrapper}</JotaiProvider>`;
+
+    const mainContent = `import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+${providerImports}import App from './App'
+import './index.css'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    ${appWrapper}
+  </StrictMode>,
+)
+`;
+    await fs.writeFile(path.join(projectPath, 'src', `main.${ext}`), mainContent);
+
+    const appContent = `function App() {
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-6 py-20">
+        <header className="mb-20 border-b border-black pb-12">
+          <div className="mb-4">
+            <span className="text-xs font-light tracking-widest uppercase text-gray-600">
+              Generated with DevStart CLI
+            </span>
+          </div>
+          <h1 className="text-6xl font-light tracking-tight text-black mb-6">
+            ${projectName}
+          </h1>
+          <p className="text-xl font-light text-gray-600 max-w-2xl">
+            Production-ready application scaffolded in 30 seconds
+          </p>
+        </header>
+      </div>
+    </div>
+  )
+}
+
+export default App
+`;
+    await fs.writeFile(path.join(projectPath, 'src', `App.${ext}`), appContent);
+
+    const indexCss = `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+`;
+    await fs.writeFile(path.join(projectPath, 'src', 'index.css'), indexCss);
+
+    const indexHtml = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${projectName}</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.${ext}"></script>
+  </body>
+</html>
+`;
+    await fs.writeFile(path.join(projectPath, 'index.html'), indexHtml);
+
+    const viteConfig = `import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+`;
+    await fs.writeFile(path.join(projectPath, `vite.config.${configExt}`), viteConfig);
+  }
+
   // Create tsconfig.json if TypeScript
   if (hasTypescript) {
     const tsConfig = framework === 'nextjs-app' || framework === 'nextjs-pages' ? {
@@ -463,7 +567,7 @@ module.exports = {
 }
 
 async function generatePackageJson(projectPath, config) {
-  const { projectName, framework, styling, ui, stateManagement, dataFetching, database, auth, additionalTools, typescript } = config;
+  const { projectName, framework, styling, ui, stateManagement, dataFetching, database, auth, additionalTools, typescript, useLatest, linting } = config;
 
   // Collect all dependencies
   const dependencies = [];
@@ -506,6 +610,10 @@ async function generatePackageJson(projectPath, config) {
     const dbDeps = dependencyMap.database[database];
     dependencies.push(...dbDeps.dependencies);
     devDependencies.push(...dbDeps.devDependencies);
+    // @supabase/ssr is Next.js-specific (server components / middleware)
+    if (database === 'supabase' && (framework === 'nextjs-app' || framework === 'nextjs-pages')) {
+      dependencies.push('@supabase/ssr@^0.5.0');
+    }
   }
 
   // Auth dependencies
@@ -524,6 +632,18 @@ async function generatePackageJson(projectPath, config) {
     });
   }
 
+  // Linting dependencies (framework-specific)
+  if (linting && linting !== 'none') {
+    const lintingDeps = dependencyMap.linting[linting];
+    devDependencies.push(...lintingDeps.devDependencies);
+    // Framework-specific linting extras
+    if (framework === 'nextjs-app' || framework === 'nextjs-pages') {
+      devDependencies.push('eslint-config-next@^15.0.0');
+    } else if (framework === 'vite-react') {
+      devDependencies.push('eslint-plugin-react-hooks@^5.0.0', 'eslint-plugin-react-refresh@^0.4.0');
+    }
+  }
+
   // Create package.json
   const scripts = { ...frameworkScripts[framework] };
 
@@ -532,19 +652,24 @@ async function generatePackageJson(projectPath, config) {
     scripts.postinstall = 'prisma generate';
   }
 
+  // Add format script if Prettier is selected
+  if (linting === 'eslint-prettier') {
+    scripts.format = 'prettier --write "**/*.{ts,tsx,js,jsx,json,css,md}"';
+  }
+
   const packageJson = {
     name: projectName,
     version: '0.1.0',
     private: true,
     scripts,
-    dependencies: convertToObject(dependencies),
-    devDependencies: convertToObject(devDependencies)
+    dependencies: convertToObject(dependencies, useLatest),
+    devDependencies: convertToObject(devDependencies, useLatest)
   };
 
   await fs.writeJSON(path.join(projectPath, 'package.json'), packageJson, { spaces: 2 });
 }
 
-function convertToObject(depsArray) {
+function convertToObject(depsArray, useLatest = false) {
   const obj = {};
   depsArray.forEach(dep => {
     // Handle scoped packages (@org/package@version) and regular packages (package@version)
@@ -568,18 +693,24 @@ function convertToObject(depsArray) {
       }
     }
 
-    obj[pkgName] = version;
+    obj[pkgName] = useLatest ? 'latest' : version;
   });
   return obj;
 }
 
 async function generateEnvExample(projectPath, config) {
-  const { database, auth } = config;
+  const { database, auth, framework } = config;
+  const isVite = framework === 'vite-react' || framework === 'remix';
   let envContent = '# Environment Variables\n\n';
 
   if (database !== 'none' && envVariables[database]) {
     envContent += `# ${database.toUpperCase()}\n`;
-    envContent += envVariables[database].join('\n') + '\n\n';
+    let vars = envVariables[database];
+    // Vite uses VITE_ prefix instead of NEXT_PUBLIC_
+    if (isVite) {
+      vars = vars.map(v => v.replace(/^NEXT_PUBLIC_/, 'VITE_'));
+    }
+    envContent += vars.join('\n') + '\n\n';
   }
 
   if (auth !== 'none' && auth !== 'supabase-auth' && auth !== 'firebase-auth' && envVariables[auth]) {
@@ -587,7 +718,9 @@ async function generateEnvExample(projectPath, config) {
     envContent += envVariables[auth].join('\n') + '\n\n';
   }
 
-  await fs.writeFile(path.join(projectPath, '.env.local.example'), envContent);
+  // Use .env for Vite (not .env.local which is Next.js convention)
+  const envFileName = isVite ? '.env.example' : '.env.local.example';
+  await fs.writeFile(path.join(projectPath, envFileName), envContent);
 }
 
 async function generateReadme(projectPath, config) {
@@ -666,6 +799,82 @@ async function createFolderStructure(projectPath, framework) {
 
   for (const folder of folders) {
     await fs.ensureDir(path.join(projectPath, folder));
+  }
+}
+
+async function generateLintingConfig(projectPath, config) {
+  const { framework, linting } = config;
+  const isNext = framework === 'nextjs-app' || framework === 'nextjs-pages';
+  const isVite = framework === 'vite-react';
+
+  // eslint.config.js (flat config — ESLint 9+)
+  let eslintConfig;
+  if (isNext) {
+    eslintConfig = `import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { FlatCompat } from '@eslint/eslintrc';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({ baseDirectory: __dirname });
+
+const eslintConfig = [
+  ...compat.extends('next/core-web-vitals', 'prettier'),
+];
+
+export default eslintConfig;
+`;
+  } else if (isVite) {
+    eslintConfig = `import js from '@eslint/js';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+
+export default [
+  js.configs.recommended,
+  {
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
+];
+`;
+  } else {
+    eslintConfig = `import js from '@eslint/js';
+
+export default [
+  js.configs.recommended,
+];
+`;
+  }
+
+  await fs.writeFile(path.join(projectPath, 'eslint.config.js'), eslintConfig);
+
+  if (linting === 'eslint-prettier') {
+    const prettierConfig = `const config = {
+  semi: true,
+  singleQuote: true,
+  tabWidth: 2,
+  trailingComma: 'es5',
+  printWidth: 100,
+};
+
+export default config;
+`;
+    await fs.writeFile(path.join(projectPath, 'prettier.config.js'), prettierConfig);
+
+    const prettierIgnore = `node_modules
+.next
+dist
+build
+.vercel
+`;
+    await fs.writeFile(path.join(projectPath, '.prettierignore'), prettierIgnore);
   }
 }
 
@@ -775,7 +984,7 @@ function getDatabaseName(database) {
 function getAuthName(auth) {
   const names = {
     'supabase-auth': 'Supabase Auth',
-    'nextauth': 'NextAuth.js',
+    'nextauth': 'Auth.js v5',
     'clerk': 'Clerk',
     'firebase-auth': 'Firebase Auth',
     'none': 'None'

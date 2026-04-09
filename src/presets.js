@@ -1,0 +1,47 @@
+// Pre-filled configurations for common project types
+// Each preset maps to a full config object matching the shape returned by promptUser()
+
+export const PRESETS = {
+  saas: {
+    framework: 'nextjs-app',
+    styling: 'tailwind',
+    ui: 'shadcn',
+    stateManagement: 'zustand',
+    dataFetching: 'tanstack-query',
+    database: 'supabase',
+    auth: 'clerk',
+    additionalTools: ['zod', 'react-hook-form'],
+    linting: 'eslint-prettier',
+    typescript: true,
+    git: true,
+    install: true,
+  },
+  blog: {
+    framework: 'nextjs-app',
+    styling: 'tailwind',
+    ui: 'shadcn',
+    stateManagement: 'none',
+    dataFetching: 'fetch',
+    database: 'none',
+    auth: 'none',
+    additionalTools: ['date-fns'],
+    linting: 'eslint-prettier',
+    typescript: true,
+    git: true,
+    install: true,
+  },
+  dashboard: {
+    framework: 'nextjs-app',
+    styling: 'tailwind',
+    ui: 'shadcn',
+    stateManagement: 'zustand',
+    dataFetching: 'tanstack-query',
+    database: 'prisma',
+    auth: 'nextauth',
+    additionalTools: ['zod', 'react-hook-form', 'date-fns'],
+    linting: 'eslint-prettier',
+    typescript: true,
+    git: true,
+    install: true,
+  },
+};
