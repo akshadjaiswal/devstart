@@ -1,6 +1,10 @@
 import figlet from 'figlet';
 import gradient from 'gradient-string';
 import chalk from 'chalk';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const { version } = require('../../package.json');
 
 /**
  * Display the DevStart CLI banner with gradient colors
@@ -21,7 +25,7 @@ export function displayBanner() {
   console.log(gradientColors.multiline(banner));
   console.log('');
   console.log(chalk.bold.white('  Stop configuring. Start building.'));
-  console.log(chalk.dim(`  Version: 1.0.5`) + chalk.dim(' • ') + chalk.dim('https://github.com/akshadjaiswal/devstart'));
+  console.log(chalk.dim(`  Version: ${version}`) + chalk.dim(' • ') + chalk.dim('https://github.com/akshadjaiswal/devstart'));
   console.log('');
   console.log(chalk.dim('─'.repeat(75)));
   console.log('');

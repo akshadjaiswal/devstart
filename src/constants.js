@@ -123,8 +123,9 @@ export const dependencyMap = {
   },
 
   database: {
+    // Note: Next.js frameworks also get @supabase/ssr — handled in generatePackageJson()
     'supabase': {
-      dependencies: ['@supabase/supabase-js@^2.45.0', '@supabase/ssr@^0.5.0'],
+      dependencies: ['@supabase/supabase-js@^2.45.0'],
       devDependencies: []
     },
     'firebase': {
@@ -151,7 +152,7 @@ export const dependencyMap = {
       devDependencies: []
     },
     'nextauth': {
-      dependencies: ['next-auth@^5.0.0-beta.25'],
+      dependencies: ['next-auth@^5'],
       devDependencies: []
     },
     'clerk': {
@@ -161,6 +162,29 @@ export const dependencyMap = {
     'firebase-auth': {
       dependencies: [],
       devDependencies: []
+    },
+    'none': {
+      dependencies: [],
+      devDependencies: []
+    }
+  },
+
+  linting: {
+    'eslint-prettier': {
+      dependencies: [],
+      devDependencies: [
+        'eslint@^9.0.0',
+        'prettier@^3.3.0',
+        'eslint-config-prettier@^9.1.0',
+        '@eslint/js@^9.0.0'
+      ]
+    },
+    'eslint-only': {
+      dependencies: [],
+      devDependencies: [
+        'eslint@^9.0.0',
+        '@eslint/js@^9.0.0'
+      ]
     },
     'none': {
       dependencies: [],
@@ -242,8 +266,8 @@ export const envVariables = {
     'MONGODB_URI="mongodb://localhost:27017/mydb"'
   ],
   nextauth: [
-    'NEXTAUTH_URL=http://localhost:3000',
-    'NEXTAUTH_SECRET=your-secret-key'
+    'AUTH_URL=http://localhost:3000',
+    'AUTH_SECRET=your-secret-key'
   ],
   clerk: [
     'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-publishable-key',
