@@ -1,6 +1,22 @@
 import inquirer from 'inquirer';
 import { validateProjectName } from './utils/validator.js';
 
+export async function promptProjectName() {
+  const { projectName } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'projectName',
+      message: "What's your project name?",
+      default: 'my-awesome-app',
+      validate: (input) => {
+        const validation = validateProjectName(input);
+        return validation.valid || validation.message;
+      }
+    }
+  ]);
+  return projectName;
+}
+
 export async function promptUser() {
   console.log('\nWelcome to DevStart CLI! 🚀\n');
 
@@ -95,7 +111,7 @@ export async function promptUser() {
       message: 'Authentication?',
       choices: [
         { name: 'Supabase Auth', value: 'supabase-auth' },
-        { name: 'NextAuth.js', value: 'nextauth' },
+        { name: 'Auth.js v5 (NextAuth)', value: 'nextauth' },
         { name: 'Clerk', value: 'clerk' },
         { name: 'Firebase Auth', value: 'firebase-auth' },
         { name: 'None', value: 'none' }
@@ -115,6 +131,17 @@ export async function promptUser() {
         { name: 'Lucide Icons', value: 'lucide-react' }
       ],
       default: []
+    },
+    {
+      type: 'list',
+      name: 'linting',
+      message: 'Linting & formatting?',
+      choices: [
+        { name: 'ESLint + Prettier', value: 'eslint-prettier' },
+        { name: 'ESLint only', value: 'eslint-only' },
+        { name: 'None', value: 'none' }
+      ],
+      default: 'none'
     },
     {
       type: 'confirm',
