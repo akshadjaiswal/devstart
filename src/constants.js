@@ -152,7 +152,7 @@ export const dependencyMap = {
       devDependencies: []
     },
     'nextauth': {
-      dependencies: ['next-auth@^5'],
+      dependencies: ['next-auth@5.0.0-beta.31'],
       devDependencies: []
     },
     'clerk': {
