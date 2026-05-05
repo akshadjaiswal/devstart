@@ -303,6 +303,187 @@ module.exports = nextConfig
     await fs.writeFile(path.join(projectPath, 'next.config.js'), nextConfig);
   }
 
+  if (framework === 'nextjs-pages') {
+    await fs.ensureDir(path.join(projectPath, 'pages'));
+    await fs.ensureDir(path.join(projectPath, 'pages', 'api'));
+    await fs.ensureDir(path.join(projectPath, 'public'));
+    await fs.ensureDir(path.join(projectPath, 'styles'));
+
+    const { generateProjectInitials, generateFaviconSVG } = await import('./utils/favicon.js');
+    const initials = generateProjectInitials(projectName);
+    const faviconSVG = generateFaviconSVG(initials);
+    await fs.writeFile(path.join(projectPath, 'public', 'icon.svg'), faviconSVG, 'utf-8');
+    logger.success(`Generated favicon with initials "${initials}"`);
+
+    const { dataFetching, stateManagement } = templateVars;
+    const needsQueryProvider = dataFetching === 'tanstack-query';
+    const needsReduxProvider = stateManagement === 'redux';
+    const needsApolloProvider = dataFetching === 'apollo';
+    const needsSWRProvider = dataFetching === 'swr';
+    const needsJotaiProvider = stateManagement === 'jotai';
+
+    let providerImports = `import type { AppProps } from 'next/app'\nimport '../styles/globals.css'\n`;
+    if (needsQueryProvider) providerImports += `import { QueryProvider } from '@/lib/query-provider'\n`;
+    if (needsReduxProvider) providerImports += `import { ReduxProvider } from '@/lib/redux-provider'\n`;
+    if (needsApolloProvider) providerImports += `import { ApolloProvider } from '@/lib/apollo-provider'\n`;
+    if (needsSWRProvider) providerImports += `import { SWRProvider } from '@/lib/swr-provider'\n`;
+    if (needsJotaiProvider) providerImports += `import { JotaiProvider } from '@/lib/jotai-provider'\n`;
+
+    let componentWrapper = '<Component {...pageProps} />';
+    if (needsQueryProvider) componentWrapper = `<QueryProvider>${componentWrapper}</QueryProvider>`;
+    if (needsReduxProvider) componentWrapper = `<ReduxProvider>${componentWrapper}</ReduxProvider>`;
+    if (needsApolloProvider) componentWrapper = `<ApolloProvider>${componentWrapper}</ApolloProvider>`;
+    if (needsSWRProvider) componentWrapper = `<SWRProvider>${componentWrapper}</SWRProvider>`;
+    if (needsJotaiProvider) componentWrapper = `<JotaiProvider>${componentWrapper}</JotaiProvider>`;
+
+    const appContent = `${providerImports}
+export default function App({ Component, pageProps }: AppProps) {
+  return ${componentWrapper}
+}
+`;
+    await fs.writeFile(path.join(projectPath, 'pages', `_app.${ext}`), appContent);
+
+    const documentContent = `import { Html, Head, Main, NextScript } from 'next/document'
+
+export default function Document() {
+  return (
+    <Html lang="en">
+      <Head>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  )
+}
+`;
+    await fs.writeFile(path.join(projectPath, 'pages', `_document.${ext}`), documentContent);
+
+    const indexContent = `export default function Home() {
+  return (
+    <main className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-6 py-20">
+        {/* Header */}
+        <header className="mb-20 border-b border-black pb-12">
+          <div className="mb-4">
+            <span className="text-xs font-light tracking-widest uppercase text-gray-600">
+              Generated with DevStart CLI
+            </span>
+          </div>
+          <h1 className="text-6xl md:text-8xl font-light tracking-tight text-black mb-6">
+            ${projectName}
+          </h1>
+          <p className="text-xl font-light text-gray-600 max-w-2xl">
+            Production-ready application scaffolded in 30 seconds
+          </p>
+        </header>
+
+        {/* Tech Stack */}
+        <section className="mb-20">
+          <h2 className="text-xs font-medium tracking-widest uppercase text-black mb-8 border-b border-gray-200 pb-3">
+            Your Stack
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            ${templateVars.styling !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">Styling</div>
+              <div className="font-light text-black">${getStylingName(templateVars.styling)}</div>
+            </div>` : ''}
+            ${templateVars.ui !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">UI Components</div>
+              <div className="font-light text-black">${getUIName(templateVars.ui)}</div>
+            </div>` : ''}
+            ${templateVars.stateManagement !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">State</div>
+              <div className="font-light text-black">${getStateName(templateVars.stateManagement)}</div>
+            </div>` : ''}
+            ${templateVars.dataFetching !== 'fetch' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">Data Fetching</div>
+              <div className="font-light text-black">${getDataFetchingName(templateVars.dataFetching)}</div>
+            </div>` : ''}
+            ${templateVars.database !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">Database</div>
+              <div className="font-light text-black">${getDatabaseName(templateVars.database)}</div>
+            </div>` : ''}
+            ${templateVars.auth !== 'none' ? `<div className="border border-gray-200 p-6 hover:border-black transition-colors">
+              <div className="text-xs font-light text-gray-500 mb-2">Authentication</div>
+              <div className="font-light text-black">${getAuthName(templateVars.auth)}</div>
+            </div>` : ''}
+          </div>
+        </section>
+
+        {/* Quick Start */}
+        <section className="mb-20 border border-black p-8">
+          <h2 className="text-xs font-medium tracking-widest uppercase text-black mb-6">
+            Quick Start
+          </h2>
+          <div className="space-y-4 font-light text-gray-700">
+            <div className="flex items-start gap-3">
+              <span className="text-gray-400 mt-1">01</span>
+              <p>Edit <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">pages/index.tsx</code> to customize this page</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-gray-400 mt-1">02</span>
+              <p>Configure environment variables in <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">.env.local.example</code></p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-gray-400 mt-1">03</span>
+              <p>Your integrations are ready to use in the <code className="bg-gray-50 border border-gray-200 px-2 py-1 text-sm font-mono text-black">lib/</code> folder</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer / DevStart Promo */}
+        <footer className="border-t border-gray-200 pt-12">
+          <div className="mb-8">
+            <p className="text-sm font-light text-gray-600 mb-6">
+              This project was scaffolded in 30 seconds, saving you 2-4 hours of manual configuration.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <a
+                href="https://github.com/akshadjaiswal/devstart"
+                className="inline-block border border-black px-6 py-3 text-sm font-light hover:bg-black hover:text-white transition-colors text-center"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ★ Star on GitHub
+              </a>
+              <a
+                href="https://www.npmjs.com/package/devstart-cli"
+                className="inline-block border border-gray-300 px-6 py-3 text-sm font-light hover:border-black transition-colors text-center"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View on npm
+              </a>
+            </div>
+          </div>
+          <div className="text-xs font-light text-gray-500">
+            <code className="bg-gray-50 border border-gray-200 px-2 py-1 font-mono">npx devstart-cli init</code>
+          </div>
+        </footer>
+      </div>
+    </main>
+  )
+}
+`;
+    await fs.writeFile(path.join(projectPath, 'pages', `index.${ext}`), indexContent);
+
+    const globalsCss = `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+`;
+    await fs.writeFile(path.join(projectPath, 'styles', 'globals.css'), globalsCss);
+
+    const nextConfig = `/** @type {import('next').NextConfig} */
+const nextConfig = {}
+
+module.exports = nextConfig
+`;
+    await fs.writeFile(path.join(projectPath, 'next.config.js'), nextConfig);
+  }
+
   if (framework === 'vite-react') {
     await fs.ensureDir(path.join(projectPath, 'src'));
     await fs.ensureDir(path.join(projectPath, 'public'));
