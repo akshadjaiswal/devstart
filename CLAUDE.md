@@ -56,10 +56,10 @@ bin/index.js          # Shebang entry point
 | File | Responsibility |
 |------|---------------|
 | `src/constants.js` | All dependency maps (including `linting`), npm scripts per framework, env var templates |
-| `src/generator.js` | File generation engine; provider auto-wrapping for both Next.js (`layout.tsx`) and Vite (`main.tsx`) |
+| `src/generator.js` | File generation engine; provider auto-wrapping for App Router (`layout.tsx`), Pages Router (`_app.tsx`), and Vite (`main.tsx`) |
 | `src/presets.js` | Pre-filled configs for `saas`, `blog`, `dashboard` presets |
 | `src/commands/upgrade.js` | Detects framework from existing `package.json`, adds a missing integration |
-| `src/templates/` | Template files per framework × integration — both `nextjs-app/` and `vite-react/` are fully populated |
+| `src/templates/` | Template files per framework × integration — `nextjs-app/`, `nextjs-pages/`, and `vite-react/` are fully populated |
 | `src/utils/package-manager.js` | Auto-detects npm / yarn / pnpm / bun |
 | `src/utils/favicon.js` | Generates SVG favicon from project name initials |
 
@@ -78,7 +78,7 @@ bin/index.js          # Shebang entry point
 3. Create template files under `src/templates/<framework>/<integration>/`.
 4. Wire the integration into `generator.js` `copyConditionalTemplate()`.
 5. Add a prompt option in `src/prompts.js` if it requires user input.
-6. If the integration needs a React provider wrapper, add it to `createMinimalFiles()` in `generator.js` (Next.js wraps in `layout.tsx`, Vite wraps in `main.tsx`).
+6. If the integration needs a React provider wrapper, add it to `createMinimalFiles()` in `generator.js` (App Router wraps in `layout.tsx`, Pages Router wraps in `_app.tsx`, Vite wraps in `main.tsx`).
 7. Add the integration to `INTEGRATION_PACKAGES` and `INTEGRATION_CATEGORIES` in `src/commands/upgrade.js`.
 
 ### Supported frameworks and integrations
